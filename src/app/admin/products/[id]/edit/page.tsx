@@ -6,14 +6,14 @@ import { PageHeader } from "@/app/admin/_components/PageHeader";
 import { db } from "@/server/db";
 import ProductForm from "../../_components/ProductForm";
 
-export default async function EditProductPage({
-  params,
-}: {
+type Props = {
   params: { id: string };
-}) {
-  const product = await db.product.findUnique({
-    where: { id: params.id },
-  });
+};
+
+export default async function EditProductPage({ params }: Props) {
+  const { id } = params; // ✅ this is fine if `params` comes from an async function
+
+  const product = await db.product.findUnique({ where: { id } });
 
   if (!product) {
     return <p>Product not found.</p>;

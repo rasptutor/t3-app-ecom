@@ -10,6 +10,7 @@ import { formatCurrency, formatNumber } from "@/lib/formatters";
 import { CheckCircle2, MoreVertical, XCircle } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { ActiveToggleDropdownItem, DeleteDropdownItem } from "./_components/ProductActions";
+import { EditProductLink } from "./_components/EditProductLink";
 
 export default function AdminProductsPage() {
   return (
@@ -106,9 +107,7 @@ function ProductsTable() {
                         </a>
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>
-                        <Link href={`/admin/products/${product.id}/edit`}>
-                          Edit
-                        </Link>
+                        <EditProductLink id={product.id} />
                       </DropdownMenuItem>
                         <ActiveToggleDropdownItem
                           id={product.id}
