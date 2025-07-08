@@ -14,6 +14,10 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "No file provided" }, { status: 400 });
         }
 
+        if (!file.name) {
+            return NextResponse.json({ error: "File is missing a name" }, { status: 400 });
+        }
+
         console.log("Received file:", file.name, file.size);
 
         const bytes = await file.arrayBuffer();
@@ -21,7 +25,8 @@ export async function POST(req: NextRequest) {
         //const buffer = Buffer.from(await file.arrayBuffer());
         const fileName = file.name.replace(/[^a-z0-9_.-]/gi, "_").toLowerCase();
         //const uploadDir = path.join(process.cwd(), "public/uploads");
-        const uploadDir = path.join(process.cwd(), "public", "uploads");
+        const folder = req.nextUrl.searchParams.get("folder") || "";
+        const uploadDir = path.join(process.cwd(), "public", "uploads", folder);
 
         // Make sure directory exists
         await mkdir(uploadDir, { recursive: true });
@@ -33,11 +38,11 @@ export async function POST(req: NextRequest) {
 
         console.log("File saved to:", filePath);
 
-        return NextResponse.json({ url: `/uploads/${fileName}` });
+        return NextResponse.json({ url: `/uploads/${folder}/${fileName}` });
     } catch (err) {
         console.error("Upload error:", err)
         return NextResponse.json(
-        { error: "Internal Server Error" },
+        { error: (err as Error).message || "Internal Server Error" },
         { status: 500 }
         )
   }

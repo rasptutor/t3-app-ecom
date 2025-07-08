@@ -63,38 +63,58 @@ export default function ProductForm({ product }: { product?: Product }) {
         const description = formData.get("description") as string
         const price = Number(formData.get("priceInCents"))
         const file = formData.get("file") as File
+        if (!file) {
+        throw new Error("No file selected for upload.");
+        }
         const image = formData.get("image") as File
 
         const fakeUpload = async (file: File, folder: string) => {
-        const formData = new FormData();
-        formData.append("file", file);
+            if (!file || !file.name) {
+                throw new Error("Uploaded file has no name");
+            }
+            const formData = new FormData();
+            formData.append("file", file);
+            console.log("Uploading file:", file.name)
 
-        const res = await fetch("/api/upload", {
-            method: "POST",
-            body: formData,
-        });
+            const res = await fetch(`/api/upload?folder=${folder}`, {
+                method: "POST",
+                body: formData,
+            });
 
-        if (!res.ok) {
-            const text = await res.text(); // Capture whatever was returned (if anything)
-            throw new Error(`Upload failed (${res.status}): ${text}`);
-        }
+            const text = await res.text(); // always get this
+            console.log("Upload response:", text);
 
-        let data: any;
-        try {
-            data = await res.json();
-        } catch (err) {
-            throw new Error("Failed to parse upload response as JSON");
-        }
+            if (!res.ok) {
+                //const text = await res.text(); // Capture whatever was returned (if anything)
+                throw new Error(`Upload failed (${res.status}): ${text}`);
+            }
 
-        if (!data?.url) {
-            throw new Error("Upload response missing 'url' field");
-        }
+            let data: any;
+            try {
+                data = JSON.parse(text);
+            } catch (err) {
+                throw new Error("Failed to parse upload response as JSON");
+            }
 
-        return data.url as string;
+            if (!data?.url) {
+                throw new Error("Upload response missing 'url' field");
+            }
+
+            return data.url as string;
         };
 
-        const filePath = file ? await fakeUpload(file, "downloads") : product?.filePath ?? "";
-        const imagePath = image ? await fakeUpload(image, "images") : product?.imagePath ?? "";
+        //const filePath = file ? await fakeUpload(file, "downloads") : product?.filePath ?? "";
+        //const imagePath = image ? await fakeUpload(image, "images") : product?.imagePath ?? "";
+
+        let filePath = product?.filePath ?? "";
+        if (file && file.name) {
+        filePath = await fakeUpload(file, "downloads");
+        }
+
+        let imagePath = product?.imagePath ?? "";
+        if (image && image.name) {
+        imagePath = await fakeUpload(image, "images");
+        }
 
         if (product) {
             updateProduct({

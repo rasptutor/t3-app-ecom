@@ -107,7 +107,9 @@ function ProductsTable() {
                         </a>
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>
-                        <EditProductLink id={product.id} />
+                        <Link href={`/admin/products/${product.id}/edit`} >
+                          Edit
+                        </Link>
                       </DropdownMenuItem>
                         <ActiveToggleDropdownItem
                           id={product.id}

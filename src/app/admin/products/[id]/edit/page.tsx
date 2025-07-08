@@ -7,11 +7,11 @@ import { db } from "@/server/db";
 import ProductForm from "../../_components/ProductForm";
 
 type Props = {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 };
 
 export default async function EditProductPage({ params }: Props) {
-  const { id } = params; // ✅ this is fine if `params` comes from an async function
+  const id = (await params).id; // ✅ this is fine if `params` comes from an async function
 
   const product = await db.product.findUnique({ where: { id } });
 
