@@ -2,7 +2,6 @@ import Link from "next/link";
 
 import { auth } from "@/server/auth";
 import { HydrateClient } from "@/trpc/server";
-import { db } from "@/server/db";
 import { redirect } from "next/navigation";
 import { AuthButton } from "@/components/AuthButton";
 
@@ -12,9 +11,11 @@ export default async function Home() {
   
   if (session?.user.role === 'ADMIN') {          
     redirect('/admin')
-  } else {
-    //redirect('/client')
-  }  
+  }
+  
+  if (session?.user.role === 'USER') {
+    redirect('/client')
+  }
 
   return (
     <HydrateClient>
@@ -23,15 +24,10 @@ export default async function Home() {
           <h1 className="text-5xl font-extrabold tracking-tight sm:text-[5rem]">
             Create <span className="text-[hsl(280,100%,70%)]">T3</span> App
           </h1>          
-          <div className="flex flex-col items-center gap-2">
-            
-            <div className="flex flex-col items-center justify-center gap-4">
-              <p className="text-center text-2xl text-white">
-                {/*session && <span>Logged in as {session.user?.name} as {session.user?.role}</span>*/}
-              </p>
-              <AuthButton session={session}/>              
-              
-            </div>
+          <div className="flex flex-col items-center justify-center gap-4">  
+                       
+              <AuthButton session={session}/>    
+                     
           </div>          
         </div>
       </main>

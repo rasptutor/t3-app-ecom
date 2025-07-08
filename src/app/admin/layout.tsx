@@ -2,8 +2,6 @@
 
 import { Nav, NavLink } from "@/components/Nav"
 import { requireAdmin } from "@/lib/auth-guards";
-import { auth } from "@/server/auth";
-import { redirect } from "next/navigation";
 
 export default async function AdminLayout({
   children,
