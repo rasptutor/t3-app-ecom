@@ -3,10 +3,8 @@ export const dynamic = "force-dynamic";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireAdmin } from "@/lib/auth-guards";
 import { formatCurrency } from "@/lib/formatters";
-import { auth } from "@/server/auth";
 
 import { db } from "@/server/db";
-import { redirect } from "next/navigation";
 
 async function getSalesData() {
   const totalOrders = await db.order.count();
